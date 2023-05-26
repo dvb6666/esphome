@@ -30,7 +30,10 @@ void InternalTemperatureSensor::update() {
   ESP_LOGV(TAG, "Raw temperature value: %d", raw);
   temperature = (raw - 32) / 1.8f;
   success = (raw != 128) || have_success;
-  if (success) have_success = true;
+  if (success && !have_success) {
+    ESP_LOGD(TAG, "First success value received (value=%.1f). Next \"invalid\" checks will be ignored", temperature);
+    have_success = true;
+  }
 #elif defined(USE_ESP32_VARIANT_ESP32C3) || defined(USE_ESP32_VARIANT_ESP32S2) || defined(USE_ESP32_VARIANT_ESP32S3)
   temp_sensor_config_t tsens = TSENS_CONFIG_DEFAULT();
   temp_sensor_set_config(tsens);
