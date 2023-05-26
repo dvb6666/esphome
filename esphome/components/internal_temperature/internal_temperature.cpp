@@ -19,6 +19,7 @@ namespace esphome {
 namespace internal_temperature {
 
 static const char *const TAG = "internal_temperature";
+static bool have_success = false;
 
 void InternalTemperatureSensor::update() {
   float temperature = NAN;
@@ -28,7 +29,8 @@ void InternalTemperatureSensor::update() {
   uint8_t raw = temprature_sens_read();
   ESP_LOGV(TAG, "Raw temperature value: %d", raw);
   temperature = (raw - 32) / 1.8f;
-  success = (raw != 128);
+  success = (raw != 128) || have_success;
+  if (success) have_success = true;
 #elif defined(USE_ESP32_VARIANT_ESP32C3) || defined(USE_ESP32_VARIANT_ESP32S2) || defined(USE_ESP32_VARIANT_ESP32S3)
   temp_sensor_config_t tsens = TSENS_CONFIG_DEFAULT();
   temp_sensor_set_config(tsens);
@@ -56,7 +58,7 @@ void InternalTemperatureSensor::update() {
   }
 }
 
-void InternalTemperatureSensor::dump_config() { LOG_SENSOR("", "Internal Temperature Sensor", this); }
+void InternalTemperatureSensor::dump_config() { LOG_SENSOR("", "Internal Temperature Sensor (dvb6666)", this); }
 
 }  // namespace internal_temperature
 }  // namespace esphome
