@@ -43,7 +43,11 @@ void InternalTemperatureSensor::update() {
   uint8_t raw = temprature_sens_read();
   ESP_LOGV(TAG, "Raw temperature value: %d", raw);
   temperature = (raw - 32) / 1.8f;
-  success = (raw != 128);
+  success = (raw != 128) || has_success_;
+  if (success && !has_success_) {
+    ESP_LOGD(TAG, "First success value received (value=%.1f). Next \"invalid\" checks will be ignored", temperature);
+    has_success_ = true;
+  }
 #elif defined(USE_ESP32_VARIANT_ESP32C2) || defined(USE_ESP32_VARIANT_ESP32C3) || \
     defined(USE_ESP32_VARIANT_ESP32C5) || defined(USE_ESP32_VARIANT_ESP32C6) || defined(USE_ESP32_VARIANT_ESP32C61) || \
     defined(USE_ESP32_VARIANT_ESP32H2) || defined(USE_ESP32_VARIANT_ESP32P4) || defined(USE_ESP32_VARIANT_ESP32S2) || \

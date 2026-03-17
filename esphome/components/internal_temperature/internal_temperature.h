@@ -12,6 +12,9 @@ class InternalTemperatureSensor : public sensor::Sensor, public PollingComponent
   void dump_config() override;
 
   void update() override;
+
+ protected:
+  bool has_success_{false};
 };
 
 }  // namespace internal_temperature
